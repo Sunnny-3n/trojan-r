@@ -1,42 +1,24 @@
 on: [push]
-
-name: nightly
+name: msvc rust
 
 jobs:
-  build-windows:
+  windows:
+    name: windows
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+      - uses: ilammy/msvc-dev-cmd@v1
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
-      - uses: actions/upload-artifact@v2
-        with:
-          name: build-windows
-          path: target\release\trojan-r
+      - name: Build
+        env:
+          RUSTFLAGS: -C target-cpu=amdfam10
+        run: 
+          cargo build --release
 
-  build-linux:
-    strategy:
-      matrix:
-        target: [x86_64-unknown-linux-musl, armv7-unknown-linux-musleabihf, arm-unknown-linux-musleabihf, aarch64-unknown-linux-musl]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --target ${{ matrix.target }}
       - uses: actions/upload-artifact@v2
         with:
-          name: build-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/trojan-r
+          name: trojan-r.exe
+          path: target/release/trojan-r.exe
+          
