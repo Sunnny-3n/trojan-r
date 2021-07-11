@@ -36,7 +36,7 @@ use crate::{
     },
 };
 
-const RELAY_BUFFER_SIZE: usize = 0x4000;
+const RELAY_BUFFER_SIZE: usize = 16384 * 3;
 
 async fn copy_udp<R: UdpRead, W: UdpWrite>(r: &mut R, w: &mut W) -> io::Result<()> {
     let mut buf = [0u8; RELAY_BUFFER_SIZE];
